@@ -1,0 +1,43 @@
+import type { Metadata } from "next";
+import { notFound, redirect } from "next/navigation";
+import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
+import { prisma } from "@/lib/prisma";
+import PageBuilder from "../../builder/PageBuilder";
+
+interface Props { params: { id: string } }
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const page = await prisma.page.findUnique({ where: { id: params.id }, select: { title: true } });
+  return { title: page ? `Edit "${page.title}" — Admin` : "Edit Page — Admin" };
+}
+
+export default async function EditPagePage({ params }: Props) {
+  if (isSupabaseConfigured) {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) redirect("/login");
+    const dbUser = await prisma.user.findUnique({ where: { supabaseId: user.id } });
+    if (!dbUser || dbUser.role === "CUSTOMER") redirect("/");
+  }
+
+  const page = await prisma.page.findUnique({ where: { id: params.id } });
+  if (!page) notFound();
+
+  const pageData = {
+    id:             page.id,
+    title:          page.title,
+    slug:           page.slug,
+    content:        page.content,
+    excerpt:        page.excerpt,
+    imageUrl:       page.imageUrl,
+    status:         page.status as string,
+    showInNav:      page.showInNav,
+    navOrder:       page.navOrder,
+    seoTitle:       page.seoTitle,
+    seoDescription: page.seoDescription,
+    blocks:         page.blocks,
+    pageKey:        page.pageKey,
+  };
+
+  return <PageBuilder mode="edit" page={pageData} />;
+}

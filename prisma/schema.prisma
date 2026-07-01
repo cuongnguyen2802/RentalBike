@@ -1,0 +1,229 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Station {
+  id           String   @id @default(cuid())
+  name         String
+  address      String
+  lat          Float
+  lng          Float
+  openingHours Json
+  phone        String?
+  imageUrl     String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  bikes Bike[]
+
+  @@map("stations")
+}
+
+model Bike {
+  id          String     @id @default(cuid())
+  model       String
+  type        BikeType
+  stationId   String
+  status      BikeStatus @default(AVAILABLE)
+  hourlyRate  Decimal    @db.Decimal(10, 2)
+  dailyRate   Decimal    @db.Decimal(10, 2)
+  description    String?
+  imageUrl       String?
+  features       String[]
+  slug           String?    @unique
+  seoTitle       String?
+  seoDescription String?
+  createdAt      DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  station  Station   @relation(fields: [stationId], references: [id])
+  bookings Booking[]
+
+  @@map("bikes")
+}
+
+model User {
+  id         String   @id @default(cuid())
+  supabaseId String   @unique
+  name       String
+  email      String   @unique
+  phone      String?
+  role       UserRole @default(CUSTOMER)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  bookings Booking[]
+
+  @@map("users")
+}
+
+model Booking {
+  id          String        @id @default(cuid())
+  bikeId      String
+  userId      String
+  startTime   DateTime
+  endTime     DateTime
+  status      BookingStatus @default(PENDING)
+  totalPrice  Decimal       @db.Decimal(10, 2)
+  depositPaid Boolean       @default(false)
+  notes       String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  bike     Bike             @relation(fields: [bikeId], references: [id])
+  user     User             @relation(fields: [userId], references: [id])
+  payments Payment[]
+  lock     AvailabilityLock?
+
+  @@map("bookings")
+}
+
+model AvailabilityLock {
+  id        String   @id @default(cuid())
+  bikeId    String
+  bookingId String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@map("availability_locks")
+}
+
+model Payment {
+  id                    String        @id @default(cuid())
+  bookingId             String
+  provider              String
+  amount                Decimal       @db.Decimal(10, 2)
+  currency              String        @default("usd")
+  status                PaymentStatus @default(PENDING)
+  stripePaymentIntentId String?
+  metadata              Json?
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+
+  booking Booking @relation(fields: [bookingId], references: [id])
+
+  @@map("payments")
+}
+
+enum BikeType {
+  CITY
+  MOUNTAIN
+  ELECTRIC
+  KIDS
+  ROAD
+}
+
+enum BikeStatus {
+  AVAILABLE
+  RENTED
+  MAINTENANCE
+  RETIRED
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum UserRole {
+  CUSTOMER
+  STAFF
+  ADMIN
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  REFUNDED
+}
+
+model Post {
+  id             String     @id @default(cuid())
+  title          String
+  slug           String     @unique
+  excerpt        String?
+  content        String?
+  imageUrl       String?
+  status         PostStatus @default(DRAFT)
+  publishedAt    DateTime?
+  seoTitle       String?
+  seoDescription String?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  @@map("posts")
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+}
+
+model Page {
+  id             String     @id @default(cuid())
+  title          String
+  slug           String     @unique
+  content        String?
+  excerpt        String?
+  imageUrl       String?
+  status         PageStatus @default(DRAFT)
+  showInNav      Boolean    @default(false)
+  navOrder       Int        @default(0)
+  seoTitle       String?
+  seoDescription String?
+  blocks         Json?
+  pageKey        String?    @unique
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  @@map("pages")
+}
+
+enum PageStatus {
+  DRAFT
+  PUBLISHED
+}
+
+model SiteSetting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+
+  @@map("site_settings")
+}
+
+model Menu {
+  id        String     @id @default(cuid())
+  name      String
+  slug      String     @unique
+  items     MenuItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@map("menus")
+}
+
+model MenuItem {
+  id        String   @id @default(cuid())
+  menuId    String
+  label     String
+  url       String
+  target    String   @default("_self")
+  order     Int      @default(0)
+  menu      Menu     @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("menu_items")
+}
