@@ -39,7 +39,7 @@ export default async function StationsPage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {stations.map((station) => {
+              {stations.map((station: (typeof stations)[number]) => {
                 const hours = station.openingHours as Record<string, string>;
                 return (
                   <Card key={station.id} className="hover:shadow-md transition-shadow">
