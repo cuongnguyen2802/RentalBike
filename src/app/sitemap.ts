@@ -4,10 +4,17 @@ import { prisma } from "@/lib/prisma";
 const BASE = process.env.NEXT_PUBLIC_APP_URL ?? "https://pedalgo.com";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [bikes, posts] = await Promise.all([
-    prisma.bike.findMany({ where: { status: "AVAILABLE" }, select: { id: true, updatedAt: true } }),
-    prisma.post.findMany({ where: { status: "PUBLISHED" }, select: { slug: true, updatedAt: true } }),
-  ]);
+  let bikes: { id: string; updatedAt: Date }[] = [];
+  let posts: { slug: string; updatedAt: Date }[] = [];
+
+  try {
+    [bikes, posts] = await Promise.all([
+      prisma.bike.findMany({ where: { status: "AVAILABLE" }, select: { id: true, updatedAt: true } }),
+      prisma.post.findMany({ where: { status: "PUBLISHED" }, select: { slug: true, updatedAt: true } }),
+    ]);
+  } catch {
+    // DB unavailable at build time — return static URLs only
+  }
 
   const bikeUrls = bikes.map((b) => ({
     url:             `${BASE}/book/${b.id}`,
