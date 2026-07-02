@@ -1,3 +1,5 @@
+export const revalidate = 60; // ISR: regenerate at most once per minute
+
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";

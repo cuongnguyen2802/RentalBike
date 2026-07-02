@@ -7,7 +7,7 @@ import Footer from "@/components/shared/Footer";
 import ChatWidget from "@/components/shared/ChatWidget";
 import { getSettings, DEFAULT_SEO } from "@/lib/settings";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], display: "swap", preload: true });
 
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await getSettings("seo", DEFAULT_SEO);
