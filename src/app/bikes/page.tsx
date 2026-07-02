@@ -23,7 +23,7 @@ interface SearchParams {
 }
 
 export default async function BikesPage({ searchParams }: { searchParams: SearchParams }) {
-  const stations = await prisma.station.findMany({ orderBy: { name: "asc" } });
+  const stations = await prisma.station.findMany({ orderBy: { name: "asc" } }).catch(() => []);
 
   const typeFilter  = searchParams.type?.toUpperCase() as BikeType | undefined;
   const validTypes: BikeType[] = ["CITY", "MOUNTAIN", "ELECTRIC", "KIDS", "ROAD"];
@@ -46,7 +46,7 @@ export default async function BikesPage({ searchParams }: { searchParams: Search
     },
     include: { station: true },
     orderBy: [{ type: "asc" }, { hourlyRate: "asc" }],
-  });
+  }).catch(() => []);
 
   // When dates selected: find bookings that overlap the window
   // bookedMap: bikeId → latest endTime among all conflicting bookings

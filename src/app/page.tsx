@@ -40,14 +40,14 @@ export default async function HomePage() {
       include: { station: true },
       take: 6,
       orderBy: { hourlyRate: "asc" },
-    }),
-    prisma.bike.count({ where: { status: "AVAILABLE" } }),
+    }).catch(() => []),
+    prisma.bike.count({ where: { status: "AVAILABLE" } }).catch(() => 0),
     prisma.post.findMany({
       where: { status: "PUBLISHED" },
       orderBy: { publishedAt: "desc" },
       take: 3,
       select: { id: true, title: true, slug: true, excerpt: true, imageUrl: true, publishedAt: true, createdAt: true },
-    }),
+    }).catch(() => []),
   ]);
 
   return (
