@@ -51,9 +51,10 @@ export default async function BookingPage({ params, searchParams }: Props) {
   if (isSupabaseConfigured) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) redirect(`/login?next=/book/${params.bikeId}`);
-    const dbUser = await prisma.user.findUnique({ where: { supabaseId: user.id } });
-    if (dbUser) customerDefaults = { name: dbUser.name, email: dbUser.email, phone: dbUser.phone ?? undefined };
+    if (user) {
+      const dbUser = await prisma.user.findUnique({ where: { supabaseId: user.id } });
+      if (dbUser) customerDefaults = { name: dbUser.name, email: dbUser.email, phone: dbUser.phone ?? undefined };
+    }
   }
 
   const bike = await prisma.bike.findUnique({
