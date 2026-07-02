@@ -12,8 +12,12 @@ function formatDate(iso: string) {
 }
 
 export async function generateStaticParams() {
-  const posts = await prisma.post.findMany({ where: { status: "PUBLISHED" }, select: { slug: true } });
-  return posts.map(p => ({ slug: p.slug }));
+  try {
+    const posts = await prisma.post.findMany({ where: { status: "PUBLISHED" }, select: { slug: true } });
+    return posts.map(p => ({ slug: p.slug }));
+  } catch {
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

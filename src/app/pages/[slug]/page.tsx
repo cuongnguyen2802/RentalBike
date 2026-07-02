@@ -10,8 +10,12 @@ import type { Block } from "@/app/admin/pages/builder/types";
 interface Props { params: { slug: string } }
 
 export async function generateStaticParams() {
-  const pages = await prisma.page.findMany({ where: { status: "PUBLISHED" }, select: { slug: true } });
-  return pages.map(p => ({ slug: p.slug }));
+  try {
+    const pages = await prisma.page.findMany({ where: { status: "PUBLISHED" }, select: { slug: true } });
+    return pages.map(p => ({ slug: p.slug }));
+  } catch {
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
