@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { requireAdmin } from "@/lib/admin-auth";
-import { prisma } from "@/lib/prisma";
 import { getAllSettings } from "@/lib/settings";
 import SettingsClient from "./SettingsClient";
 
