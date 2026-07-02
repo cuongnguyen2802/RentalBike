@@ -3,14 +3,7 @@ import Link from "next/link";
 import { MapPin, Zap, Star, CalendarX, CheckCircle2 } from "lucide-react";
 import { getBikeTypeLabel, formatCurrency } from "@/lib/utils";
 import type { BikeWithStation } from "@/types";
-
-const BIKE_IMAGES: Record<string, string> = {
-  CITY:     "https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=600&q=80",
-  MOUNTAIN: "https://images.unsplash.com/photo-1576435728678-68d0fbf94e91?auto=format&fit=crop&w=600&q=80",
-  ELECTRIC: "https://images.unsplash.com/photo-1619118606863-d26a3e3fcad6?auto=format&fit=crop&w=600&q=80",
-  ROAD:     "https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?auto=format&fit=crop&w=600&q=80",
-  KIDS:     "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=600&q=80",
-};
+import { BIKE_IMAGES } from "@/lib/bike-images";
 
 const TYPE_BADGE: Record<string, string> = {
   CITY:     "bg-sky-100 text-sky-700",

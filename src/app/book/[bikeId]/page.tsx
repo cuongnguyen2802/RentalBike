@@ -7,19 +7,12 @@ import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import { formatCurrency, getBikeTypeLabel } from "@/lib/utils";
 import { ChevronLeft, Check, Star } from "lucide-react";
 import BookingForm from "./BookingForm";
+import { BIKE_IMAGES } from "@/lib/bike-images";
 
 interface Props {
   params: { bikeId: string };
   searchParams?: { from?: string; to?: string };
 }
-
-const BIKE_IMAGES: Record<string, string> = {
-  CITY:     "https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=900&q=90",
-  MOUNTAIN: "https://images.unsplash.com/photo-1576435728678-68d0fbf94e91?auto=format&fit=crop&w=900&q=90",
-  ELECTRIC: "https://images.unsplash.com/photo-1619118606863-d26a3e3fcad6?auto=format&fit=crop&w=900&q=90",
-  ROAD:     "https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?auto=format&fit=crop&w=900&q=90",
-  KIDS:     "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=900&q=90",
-};
 
 const TYPE_BADGE: Record<string, string> = {
   CITY:     "bg-sky-500",

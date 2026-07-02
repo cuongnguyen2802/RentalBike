@@ -7,6 +7,7 @@ import { ArrowRight, Bike, Calendar, Clock, MapPin, Shield, Star, Zap } from "lu
 import { prisma } from "@/lib/prisma";
 import { formatCurrency, getBikeTypeLabel } from "@/lib/utils";
 import HeroSlider from "@/components/shared/HeroSlider";
+import { BIKE_IMAGES } from "@/lib/bike-images";
 
 const features = [
   { icon: Clock,  title: "Real-Time Availability",  description: "See live availability as you browse. No double bookings — ever." },
@@ -14,14 +15,6 @@ const features = [
   { icon: Shield, title: "Secure & Simple",          description: "Book and pay online in seconds. Your deposit is protected." },
   { icon: Zap,    title: "Instant Confirmation",     description: "Get your booking confirmed immediately — no waiting, no calls." },
 ];
-
-const BIKE_IMAGES: Record<string, string> = {
-  CITY:     "https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=600&q=80",
-  MOUNTAIN: "https://images.unsplash.com/photo-1576435728678-68d0fbf94e91?auto=format&fit=crop&w=600&q=80",
-  ELECTRIC: "https://images.unsplash.com/photo-1619118606863-d26a3e3fcad6?auto=format&fit=crop&w=600&q=80",
-  ROAD:     "https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?auto=format&fit=crop&w=600&q=80",
-  KIDS:     "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=600&q=80",
-};
 
 const TYPE_BADGE: Record<string, string> = {
   CITY:     "bg-sky-100 text-sky-700",
