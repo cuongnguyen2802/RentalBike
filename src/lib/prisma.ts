@@ -11,7 +11,7 @@ function createPrismaClient() {
     // Real queries will throw at runtime — that's expected.
     return new PrismaClient() as PrismaClient;
   }
-  const pool = new Pool({ connectionString });
+  const pool = new Pool({ connectionString, ssl: { rejectUnauthorized: false } });
   const adapter = new PrismaPg(pool);
   return new PrismaClient({
     adapter,
