@@ -1,19 +1,12 @@
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
-import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
+import { requireAdmin } from "@/lib/admin-auth";
 import { prisma } from "@/lib/prisma";
 import { MapPin, Phone, Clock, Bike, CheckCircle2, Wrench } from "lucide-react";
 
 export const metadata: Metadata = { title: "Stations — Admin" };
 
 export default async function AdminStationsPage() {
-  if (isSupabaseConfigured) {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) redirect("/login");
-    const dbUser = await prisma.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || dbUser.role === "CUSTOMER") redirect("/");
-  }
+  await requireAdmin();
 
   const stations = await prisma.station.findMany({
     include: {

@@ -1,19 +1,13 @@
 import type { Metadata } from "next";
-import { notFound, redirect } from "next/navigation";
-import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
+import { notFound } from "next/navigation";
+import { requireAdmin } from "@/lib/admin-auth";
 import { prisma } from "@/lib/prisma";
 import MenuEditorClient from "./MenuEditorClient";
 
 export const metadata: Metadata = { title: "Edit Menu — Admin" };
 
 export default async function MenuEditorPage({ params }: { params: Promise<{ id: string }> }) {
-  if (isSupabaseConfigured) {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) redirect("/login");
-    const dbUser = await prisma.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || dbUser.role === "CUSTOMER") redirect("/");
-  }
+  await requireAdmin();
 
   const { id } = await params;
 
